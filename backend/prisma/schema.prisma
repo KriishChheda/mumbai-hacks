@@ -1,29 +1,68 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id             Int          @id @default(autoincrement())
-  name           String
-  email          String       @unique
-  points         Int          @default(0)
-  moodState      String       @default("neutral")
+  id             String         @id @default(cuid())
+  email          String         @unique
+  name           String?
+  googleId       String         @unique
+  moodScore      Float          @default(0.0)
+  createdAt      DateTime       @default(now())
+
   transactions   Transaction[]
-  createdAt      DateTime     @default(now())
+  goals          Goal[]
+  groups         GroupMember[]
+  createdGroups  Group[]
 }
 
 model Transaction {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  amount    Float
-  type      String
-  category  String
-  timestamp DateTime @default(now())
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Float
+  type        String
+  merchant    String?
+  category    String?
+  timestamp   DateTime @default(now())
+}
 
-  User User @relation(fields: [userId], references: [id])
+model Goal {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  target      Float
+  progress    Float    @default(0.0)
+  createdAt   DateTime @default(now())
+}
+
+model GroupGoal {
+  id         String    @id @default(cuid())
+  groupId    String
+  title      String
+  target     Float
+  progress   Float     @default(0.0)
+  createdAt  DateTime  @default(now())
+
+  group      Group     @relation(fields: [groupId], references: [id])
+}
+
+model Group {
+  id          String         @id @default(cuid())
+  name        String
+  groupCode   String         @unique
+  createdById String
+  createdBy   User           @relation(fields: [createdById], references: [id])
+  createdAt   DateTime       @default(now())
+
+  members     GroupMember[]
+  goals       GroupGoal[]    
+}
+
+model GroupMember {
+  id        String @id @default(cuid())
+  groupId   String
+  userId    String
+
+  group     Group @relation(fields: [groupId], references: [id])
+  user      User  @relation(fields: [userId], references: [id])
+
+  @@unique([groupId, userId])
 }

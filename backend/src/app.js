@@ -1,23 +1,21 @@
 import express from "express";
-import cors from "cors";
-import { PrismaClient } from "@prisma/client";
-
 import userRoutes from "./routes/user.routes.js";
+import groupRoutes from "./routes/group.routes.js";
+import goalRoutes from "./routes/goal.routes.js";
 import transactionRoutes from "./routes/transaction.routes.js";
-import moodRoutes from "./routes/mood.routes.js";
-import leaderboardRoutes from "./routes/leaderboard.routes.js";
+
+import cors from "cors";
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-export const prisma = new PrismaClient();
+app.use(cors());
+app.use(express.json());
 
 app.use("/user", userRoutes);
-app.use("/transaction", transactionRoutes);
-app.use("/mood", moodRoutes);
-app.use("/leaderboard", leaderboardRoutes);
+app.use("/groups", groupRoutes);
+app.use("/goals", goalRoutes);
+app.use("/transactions", transactionRoutes);
 
-app.get("/", (req, res) => res.send("FinBuddy Backend Running"));
+app.get("/", (req, res) => res.send("API running"));
 
-app.listen(3000, () => console.log("🔥 Backend live on port 3000"));
+export default app;
