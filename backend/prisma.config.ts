@@ -6,7 +6,7 @@ dotenv.config({ path: resolve(process.cwd(), ".env") });
 
 export default defineConfig({
   datasource: {
-    provider: "mysql",
+    provider: "postgresql", 
     url: process.env.DATABASE_URL || "",
   },
 });
