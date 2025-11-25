@@ -1,3 +1,5 @@
+import { prisma } from "../../prisma/client.js";
+
 export const addTransaction = async (req, res) => {
   const { amount, type, merchant, category } = req.body;
 

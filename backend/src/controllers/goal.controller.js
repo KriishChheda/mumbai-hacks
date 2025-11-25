@@ -1,3 +1,5 @@
+import { prisma } from "../../prisma/client.js";
+
 export const createGroupGoal = async (req, res) => {
   const { groupId, title, target } = req.body;
 

@@ -1,3 +1,5 @@
+import { prisma } from "../../prisma/client.js";
+
 export const createGroup = async (req, res) => {
   const { name } = req.body;
 
@@ -21,10 +23,10 @@ export const createGroup = async (req, res) => {
 };
 
 export const joinGroup = async (req, res) => {
-  const { code } = req.body;
+  const { groupCode } = req.body;
 
   const group = await prisma.group.findUnique({
-    where: { groupCode: code },
+    where: { groupCode },
   });
 
   if (!group) return res.status(404).json({ error: "Group not found" });
