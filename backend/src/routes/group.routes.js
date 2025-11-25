@@ -1,5 +1,6 @@
 import express from "express";
 import { auth } from "../middleware/auth.js";
+
 import {
   createGroup,
   joinGroup,
@@ -8,10 +9,13 @@ import {
 
 const router = express.Router();
 
+// POST /groups → create a new group
 router.post("/", auth, createGroup);
 
+// POST /groups/join → join using group code
 router.post("/join", auth, joinGroup);
 
-router.get("/mine", auth, getMyGroups);
+// GET /groups/my → groups user is in
+router.get("/my", auth, getMyGroups);
 
 export default router;

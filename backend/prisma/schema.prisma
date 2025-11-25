@@ -1,68 +1,72 @@
-model User {
-  id             String         @id @default(cuid())
-  email          String         @unique
-  name           String?
-  googleId       String         @unique
-  moodScore      Float          @default(0.0)
-  createdAt      DateTime       @default(now())
+generator client {
+  provider = "prisma-client-js"
+}
 
-  transactions   Transaction[]
-  goals          Goal[]
-  groups         GroupMember[]
-  createdGroups  Group[]
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  name          String?
+  googleId      String        @unique
+  moodScore     Float         @default(0.0)
+  createdAt     DateTime      @default(now())
+  goals         Goal[]
+  createdGroups Group[]
+  groups        GroupMember[]
+  transactions  Transaction[]
 }
 
 model Transaction {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  amount      Float
-  type        String
-  merchant    String?
-  category    String?
-  timestamp   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  type      String
+  merchant  String?
+  category  String?
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Goal {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  title       String
-  target      Float
-  progress    Float    @default(0.0)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  target    Float
+  progress  Float    @default(0.0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model GroupGoal {
-  id         String    @id @default(cuid())
-  groupId    String
-  title      String
-  target     Float
-  progress   Float     @default(0.0)
-  createdAt  DateTime  @default(now())
-
-  group      Group     @relation(fields: [groupId], references: [id])
+  id        String   @id @default(cuid())
+  groupId   String
+  title     String
+  target    Float
+  progress  Float    @default(0.0)
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id])
 }
 
 model Group {
-  id          String         @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
-  groupCode   String         @unique
+  groupCode   String        @unique
   createdById String
-  createdBy   User           @relation(fields: [createdById], references: [id])
-  createdAt   DateTime       @default(now())
-
+  createdAt   DateTime      @default(now())
+  createdBy   User          @relation(fields: [createdById], references: [id])
+  goals       GroupGoal[]
   members     GroupMember[]
-  goals       GroupGoal[]    
 }
 
 model GroupMember {
-  id        String @id @default(cuid())
-  groupId   String
-  userId    String
-
-  group     Group @relation(fields: [groupId], references: [id])
-  user      User  @relation(fields: [userId], references: [id])
+  id      String @id @default(cuid())
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
 
   @@unique([groupId, userId])
 }

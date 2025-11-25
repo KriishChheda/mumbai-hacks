@@ -1,5 +1,6 @@
 import express from "express";
 import { auth } from "../middleware/auth.js";
+
 import {
   addTransaction,
   getMyTransactions,
@@ -7,7 +8,10 @@ import {
 
 const router = express.Router();
 
+// POST /transactions → add a new one
 router.post("/", auth, addTransaction);
-router.get("/", auth, getMyTransactions);
+
+// GET /transactions/my → all my transactions
+router.get("/my", auth, getMyTransactions);
 
 export default router;
