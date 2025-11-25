@@ -9,10 +9,13 @@ import {
 
 const router = express.Router();
 
-router.post("/", auth, createGroupGoal);
+// POST /goals/group → create a new group goal
+router.post("/group", auth, createGroupGoal);
 
+// POST /goals/contribute → contribute to group goal
 router.post("/contribute", auth, contributeToGroupGoal);
 
+// GET /goals/:goalId/leaderboard → leaderboard for goal
 router.get("/:goalId/leaderboard", auth, groupGoalLeaderboard);
 
 export default router;
