@@ -6,7 +6,6 @@ export const getRecommendation = async (req, res) => {
     console.log("🤖 AI: Received request for user:", req.user.id);
     const userId = req.user.id;
 
-    // 1. Fetch User
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -18,9 +17,8 @@ export const getRecommendation = async (req, res) => {
     });
 
     if (!user) throw new Error("User not found in DB");
-    console.log("✅ AI: User fetched:", user.name);
+    console.log("AI: User fetched:", user.name);
 
-    // 2. Fetch Transactions
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -30,24 +28,21 @@ export const getRecommendation = async (req, res) => {
         timestamp: { gte: thirtyDaysAgo },
       },
     });
-    console.log(`✅ AI: Fetched ${transactions.length} transactions`);
+    console.log(`AI: Fetched ${transactions.length} transactions`);
 
-    // 3. Prepare Data
     const userDataForAI = {
       ...user,
       goal: user.goals[0] || null,
-      // Ensure these fields exist to prevent recommender crashes
       income: user.income || 0,
       budgetLimit: user.budgetLimit || 0,
     };
 
-    // 4. Run Engine
     console.log("🔄 AI: Running recommendation engine...");
     const recommendation = await recommendNextAction(
       userDataForAI,
       transactions
     );
-    console.log("✨ AI: Recommendation generated:", recommendation?.type);
+    console.log("AI: Recommendation generated:", recommendation?.type);
 
     res.json(
       recommendation || {
@@ -58,7 +53,7 @@ export const getRecommendation = async (req, res) => {
       }
     );
   } catch (error) {
-    console.error("❌ AI CONTROLLER CRASH:", error); // <--- Look for this line in terminal
+    console.error("AI CONTROLLER CRASH:", error);
     res
       .status(500)
       .json({ error: "AI generation failed", details: error.message });

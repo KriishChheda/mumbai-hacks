@@ -11,7 +11,6 @@ export const merchantToSuggestions = {
   },
 };
 
-// --- NEW: Mock Knowledge Graph Query ---
 export const queryKG = async ({ category, userIncome, mood }) => {
   console.log(
     `🔍 Querying KG for: ${category}, Income: ${userIncome}, Mood: ${mood.state}`
@@ -22,7 +21,6 @@ export const queryKG = async ({ category, userIncome, mood }) => {
     govtScheme: null,
   };
 
-  // 1. Category-based alternatives
   const catLower = category?.toLowerCase() || "";
 
   if (
@@ -45,8 +43,6 @@ export const queryKG = async ({ category, userIncome, mood }) => {
     ];
   }
 
-  // 2. Income-based government schemes (Mock thresholds)
-  // Assuming monthly income input, annual < 5L is often a threshold
   if (userIncome > 0 && userIncome < 40000) {
     suggestions.govtScheme = "Atal Pension Yojana (for retirement savings)";
   }

@@ -23,7 +23,6 @@ export const contributeToGroupGoal = async (req, res) => {
   const numericAmount = parseFloat(amount);
 
   try {
-    // 1. Record the contribution (Upsert = Create or Update)
     await prisma.groupGoalProgress.upsert({
       where: {
         groupGoalId_userId: {
@@ -39,7 +38,6 @@ export const contributeToGroupGoal = async (req, res) => {
       },
     });
 
-    // 2. Update the total progress on the GroupGoal itself
     const totalProgress = await prisma.groupGoalProgress.aggregate({
       where: { groupGoalId: goalId },
       _sum: { amount: true },
@@ -50,7 +48,6 @@ export const contributeToGroupGoal = async (req, res) => {
       data: { progress: totalProgress._sum.amount || 0 },
     });
 
-    // 3. GAMIFICATION: Add Points to User (10 points per contribution)
     await prisma.user.update({
       where: { id: userId },
       data: { points: { increment: 10 } },
@@ -110,7 +107,7 @@ export const getMyGoals = async (req, res) => {
 
 export const updateGoalProgress = async (req, res) => {
   const { goalId } = req.params;
-  const { amount } = req.body; // Amount to ADD to current progress
+  const { amount } = req.body;
 
   try {
     const goal = await prisma.goal.update({

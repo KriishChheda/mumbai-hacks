@@ -2,25 +2,21 @@ import { getUserMood } from "./moodEngine.js";
 import { queryKG } from "./knowledgeGraph.js";
 
 export const recommendNextAction = async (user, transactions) => {
-  // ---- STEP 1: Compute mood ----
   const mood = await getUserMood(user.id);
 
-  // ---- STEP 2: Compute spending summary ----
   const monthlySpent = sumByCategory(transactions);
-  const topCategory = Object.keys(monthlySpent)
-    .sort((a, b) => monthlySpent[b] - monthlySpent[a])[0];
+  const topCategory = Object.keys(monthlySpent).sort(
+    (a, b) => monthlySpent[b] - monthlySpent[a]
+  )[0];
 
-  // ---- STEP 3: Query Knowledge Graph for insights ----
   const graphSuggestions = await queryKG({
     category: topCategory,
     userIncome: user.income,
     mood,
   });
 
-  // ---- STEP 4: Build Recommendations ----
   const recommendations = [];
 
-  // 4A — Mood based tone
   if (mood.state === "stressed") {
     recommendations.push({
       type: "budget_adjust",
@@ -39,7 +35,6 @@ export const recommendNextAction = async (user, transactions) => {
     });
   }
 
-  // 4B — KG-based "smart reasoning"
   if (graphSuggestions?.alternatives) {
     recommendations.push({
       type: "merchant_switch",
@@ -56,7 +51,6 @@ export const recommendNextAction = async (user, transactions) => {
     });
   }
 
-  // 4C — Gamification-based nudges
   if (user.weeklyScore < 50) {
     recommendations.push({
       type: "challenge",
@@ -66,7 +60,6 @@ export const recommendNextAction = async (user, transactions) => {
     });
   }
 
-  // 4D — Savings Goal
   if (user.goal && monthlySpent.total > user.budgetLimit) {
     recommendations.push({
       type: "goal_protection",
@@ -76,11 +69,9 @@ export const recommendNextAction = async (user, transactions) => {
     });
   }
 
-  // ---- STEP 5: RETURN BEST RECOMMENDATION ----
   return recommendations.sort((a, b) => b.score - a.score)[0];
 };
 
-// ------------ UTIL FUNCTIONS ------------
 function sumByCategory(transactions = []) {
   const map = {};
   let total = 0;

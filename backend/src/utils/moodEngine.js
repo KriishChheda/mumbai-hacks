@@ -1,6 +1,5 @@
-import { prisma } from "../../prisma/client.js"; // Corrected import path
+import { prisma } from "../../prisma/client.js";
 
-// Mood formula (simple hackathon version)
 export const updateMoodState = async (userId) => {
   const transactions = await prisma.transaction.findMany({
     where: { userId },
@@ -24,14 +23,12 @@ export const updateMoodState = async (userId) => {
   });
 };
 
-// --- NEW HELPER FOR AI ---
 export const getUserMood = async (userId) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { moodState: true, moodScore: true },
   });
 
-  // Returns structure expected by recommender.js
   return {
     state: user?.moodState || "neutral",
     score: user?.moodScore || 50,
