@@ -11,7 +11,11 @@ model User {
   email         String        @unique
   name          String?
   googleId      String        @unique
-  moodScore     Float         @default(0.0)
+  moodScore     Float         @default(50.0)
+  moodState     String        @default("neutral")
+  points        Int           @default(0)
+  income        Float         @default(0.0)
+  budgetLimit   Float         @default(0.0)
   createdAt     DateTime      @default(now())
   goals         Goal[]
   createdGroups Group[]
@@ -40,16 +44,6 @@ model Goal {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-model GroupGoal {
-  id        String   @id @default(cuid())
-  groupId   String
-  title     String
-  target    Float
-  progress  Float    @default(0.0)
-  createdAt DateTime @default(now())
-  group     Group    @relation(fields: [groupId], references: [id])
-}
-
 model Group {
   id          String        @id @default(cuid())
   name        String
@@ -69,4 +63,14 @@ model GroupMember {
   user    User   @relation(fields: [userId], references: [id])
 
   @@unique([groupId, userId])
+}
+
+model GroupGoal {
+  id        String   @id @default(cuid())
+  groupId   String
+  title     String
+  target    Float
+  progress  Float    @default(0.0)
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id])
 }
