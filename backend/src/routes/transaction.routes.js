@@ -8,6 +8,7 @@ import {
   deleteTransaction,
   addSmsTransaction,
   addBulkSms,
+  getTransactionStats,
 } from "../controllers/transaction.controller.js";
 
 const router = express.Router();
@@ -17,6 +18,9 @@ router.get("/my", auth, getMyTransactions);
 router.post("/", auth, addTransaction);
 router.patch("/:id", auth, updateTransaction);
 router.delete("/:id", auth, deleteTransaction);
+
+// Analytics
+router.get("/stats", auth, getTransactionStats);
 
 // SMS Routes
 router.post("/sms", auth, addSmsTransaction);
